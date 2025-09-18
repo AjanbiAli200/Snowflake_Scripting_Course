@@ -1,0 +1,76 @@
+-- VARIABLE DECLARATION AND ASSIGNEMENT
+
+EXECUTE IMMEDIATE
+$$
+    DECLARE
+        FIRST_NAME VARCHAR DEFAULT 'THIS IS';
+        FULL_NAME STRING;
+    BEGIN
+        LET MIDDLE_NAME := ' ';
+        LET LAST_NAME := 'SNOWFLAKE SCRIPTING';
+
+        FULL_NAME := FIRST_NAME || MIDDLE_NAME || LAST_NAME;
+        --SELECT :FIRST_NAME || :MIDDLE_NAME || :LAST_NAME INTO :FULL_NAME;
+
+        RETURN FULL_NAME;
+
+    END;
+$$;    
+
+
+EXECUTE IMMEDIATE $$
+    DECLARE
+        PROFIT NUMBER(38,2) DEFAULT 0.0;
+    BEGIN
+        LET COST NUMBER(38,2) := 100.0;
+        LET REVENUE NUMBER(38,2) DEFAULT 110.0;
+
+        PROFIT := REVENUE - COST;
+
+        RETURN PROFIT;
+
+    END;
+$$;
+
+
+
+
+-- SESSION LEVEL VARIABLES
+
+SET A = 60;
+SET (B,C) = (220,10);
+SET AGE = 'MY AGE IS ';
+
+EXECUTE IMMEDIATE
+$$
+    DECLARE
+        D INTEGER;
+
+    BEGIN
+        D := ($A + $B)/ $C;
+        RETURN $AGE || D;
+    END;
+$$;
+
+
+SET (A,B,PLACE) = (30,52,'HYDERABAD');
+
+EXECUTE IMMEDIATE
+$$
+    BEGIN
+        RETURN $PLACE || ($A+$B);
+    END;
+$$
+
+
+-- SESSION VARIABLES CAN'T BE MODIFIED
+
+SET A = 60;
+EXECUTE IMMEDIATE
+$$
+    BEGIN
+        A := 100;
+        -- $A := 100;
+        RETURN $A;
+    END
+$$

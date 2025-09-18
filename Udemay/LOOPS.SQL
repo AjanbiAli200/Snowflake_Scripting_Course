@@ -1,0 +1,102 @@
+--  CODE TO PRINT STARS IN TRIANGLE SHAPE
+
+EXECUTE IMMEDIATE
+$$
+DECLARE
+    i INTEGER;
+    j INTEGER;
+    PATTERN VARCHAR DEFAULT '';
+BEGIN
+    FOR i IN 1 TO 5
+    DO 
+        FOR j IN 1 TO i
+        DO
+            PATTERN := PATTERN || '*\t';
+        END FOR;
+        PATTERN := PATTERN || '\n';
+    END FOR;
+RETURN PATTERN;
+END;
+$$;
+
+
+-- FIND THE PRIME NUMBERS UPTO GIVEN NUMBER;
+
+CREATE OR REPLACE PROCEDURE EMP.PROCS.SP_WHILE_PRIME_NUBERS("N" INTEGER)
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+DECLARE
+    i INTEGER DEFAULT 3;
+    j INTEGER;
+    FLAG INTEGER;
+    PRIME VARCHAR DEFAULT '2';
+BEGIN
+    WHILE (I<=N)
+    DO
+        FLAG := 0;
+        FOR j IN 2 TO i-1
+        DO 
+            IF (i % j = 0) THEN 
+                FLAG := 1;
+                BREAK;
+            END IF;
+        END FOR;
+        IF (FLAG = 0) THEN
+            PRIME := PRIME || ', ' || i;
+        END IF;
+    i := i+1;
+    END WHILE;
+RETURN PRIME;
+END;
+
+CALL EMP.PROCS.SP_WHILE_PRIME_NUBERS(100);
+
+
+
+-- FIND THE PRIME NUMBERS IN THE FORM OF A TABLES
+
+CREATE OR REPLACE PROCEDURE EMP.PROCS.SP_WHILE_PRIME_NUBERS("N" INTEGER)
+RETURNS TABLE(PRIME INTEGER)
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+DECLARE
+    i INTEGER DEFAULT 2;
+    j INTEGER;
+    FLAG INTEGER;
+    RES RESULTSET;
+    PRIME VARCHAR;
+BEGIN
+    CREATE OR REPLACE TEMPORARY TABLE PRIME_NUMBERS(PRIME INTEGER);
+    WHILE (i<=N)
+    DO
+        FLAG := 0;
+        FOR j IN 2 TO i-1
+        DO 
+            IF (i % j = 0 AND i <> 2) THEN 
+                FLAG := 1;
+                BREAK;
+            END IF;
+        END FOR;
+        IF (FLAG = 0) THEN
+            --PRIME := PRIME || ', ' || i;
+            INSERT INTO PRIME_NUMBERS VALUES(:i);
+        END IF;
+    i := i+1;
+    END WHILE;
+
+    PRIME := 'SELECT * FROM PRIME_NUMBERS';
+    RES := (EXECUTE IMMEDIATE :PRIME);
+    
+RETURN TABLE(RES);
+END;
+
+
+CALL EMP.PROCS.SP_WHILE_PRIME_NUMBERS(100);
+
+
+
+
+        
